@@ -28,6 +28,13 @@
 <body>
   <div id="app">
     <h2>QR Code with Logo</h2>
+    
+    <!-- Campo de entrada para o link -->
+    <div>
+      <input type="text" v-model="link" placeholder="Insira o link aqui" style="width: 300px; padding: 10px;" />
+      <button @click="createQrcode">Gerar QR Code</button>
+    </div>
+    
     <div>
       <span>
         Dots Options Type:
@@ -73,6 +80,7 @@
     new Vue({
       el: '#app',
       data: {
+        link: '',  // Campo para armazenar o link inserido
         dotType: 'square',
         dotColor: '#000000',
         dotTypes: ['square', 'dot', 'diamond', 'star'],
@@ -85,9 +93,15 @@
       },
       methods: {
         createQrcode() {
+          // Verifica se o link está preenchido
+          if (!this.link) {
+            alert('Por favor, insira um link para gerar o QR Code.');
+            return;
+          }
+
           new QrCodeWithLogo({
             canvas: document.getElementById('canvas'),
-            content: 'https://github.com/zxpsuper/qrcode-with-logos',
+            content: this.link,  // Usa o link do campo de entrada
             width: 300,
             logo: {
               src: 'https://avatars.githubusercontent.com/u/28730619?v=4',
