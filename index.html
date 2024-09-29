@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>QR Code with Logo</title>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/view-design/dist/styles/iview.css" />
-  <script type="text/javascript" src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/view-design/dist/iview.min.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"></script>
+  <title>Gerador de QR Code com Logomarca</title>
+  <link rel="stylesheet" href="https://unpkg.com/view-design/dist/styles/iview.css" />
+  <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/view-design/dist/iview.min.js"></script>
+  <script src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -23,97 +23,62 @@
       padding: 10px 20px;
       font-size: 16px;
     }
+    input {
+      padding: 10px;
+      width: 300px;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    <h2>QR Code with Logo</h2>
+    <h2>Gerador de QR Code com Logomarca</h2>
     
-    <!-- Campo de entrada para o link -->
-    <div>
-      <input type="text" v-model="link" placeholder="Insira o link aqui" style="width: 300px; padding: 10px;" />
-      <button @click="createQrcode">Gerar QR Code</button>
-    </div>
+    <input type="text" v-model="appTitle" placeholder="Título do App" />
     
-    <div>
-      <span>
-        Dots Options Type:
-        <i-select
-          v-model="dotType"
-          style="width: 200px; text-align: left"
-          placeholder="choose"
-          @on-change="createQrcode"
-        >
-          <i-option v-for="item in dotTypes" :value="item" :key="item">{{ item }}</i-option>
-        </i-select>
-      </span>
-      <span>
-        Corners Options Type:
-        <i-select
-          v-model="cornerType"
-          style="width: 200px; text-align: left"
-          placeholder="choose"
-          @on-change="createQrcode"
-        >
-          <i-option v-for="item in cornerTypes" :value="item" :key="item">{{ item }}</i-option>
-        </i-select>
-      </span>
-    </div>
+    <input type="text" v-model="androidLink" placeholder="Link do Android (Play Store)" />
+    <input type="text" v-model="iosLink" placeholder="Link do iOS (App Store)" />
 
     <div>
-      <span>
-        Dots Color:
-        <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
-      </span>
-      <span>
-        Corners Color:
-        <color-picker v-model="cornerColor" @on-change="createQrcode"></color-picker>
-      </span>
+      Dots Color:
+      <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
     </div>
 
     <canvas id="canvas" width="300" height="300"></canvas>
-
-    <button @click="downloadQrCode">Download QR Code</button>
+    
+    <button @click="createQrcode">Gerar QR Code</button>
+    <button @click="downloadQrCode">Baixar QR Code</button>
   </div>
 
   <script>
     new Vue({
       el: '#app',
       data: {
-        link: '',  // Campo para armazenar o link inserido
-        dotType: 'square',
+        appTitle: 'Meu App',
+        androidLink: 'https://play.google.com/store/apps/details?id=com.example', // Exemplo de link
+        iosLink: 'https://apps.apple.com/app/id1234567890', // Exemplo de link
         dotColor: '#000000',
-        dotTypes: ['square', 'dot', 'diamond', 'star'],
-        cornerType: 'square',
-        cornerColor: '#000000',
-        cornerTypes: ['square', 'rounded', 'circle'],
-      },
-      mounted() {
-        this.createQrcode();
       },
       methods: {
         createQrcode() {
-          // Verifica se o link está preenchido
-          if (!this.link) {
-            alert('Por favor, insira um link para gerar o QR Code.');
-            return;
-          }
+          const userAgent = navigator.userAgent.toLowerCase();
+          const redirectUrl = userAgent.includes('android') ? this.androidLink : this.iosLink;
 
           new QrCodeWithLogo({
             canvas: document.getElementById('canvas'),
-            content: this.link,  // Usa o link do campo de entrada
+            content: redirectUrl,
             width: 300,
             logo: {
-              src: 'https://avatars.githubusercontent.com/u/28730619?v=4',
+              src: 'https://example.com/logo.png', // Coloque o URL da sua logomarca
               borderRadius: 8,
             },
             dotsOptions: {
               color: this.dotColor,
-              type: this.dotType,
+              type: 'square',
             },
             cornersOptions: {
-              color: this.cornerColor,
-              type: this.cornerType,
+              color: '#000000',
+              type: 'square',
             },
           });
         },
