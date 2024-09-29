@@ -1,96 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Code Generator with Logo Upload</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    #qrcode {
-      margin-top: 20px;
-      position: relative;
-    }
-    #qrCanvas {
-      display: inline-block;
-    }
-    input {
-      width: 300px;
-      padding: 10px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1>QR Code Generator with Logo Upload</h1>
-  <p>Insira o URL da página de redirecionamento para Android/iOS:</p>
-  <input type="text" id="urlInput" value="https://seuusuario.github.io/qr-code-generator/redirect.html">
-  <br><br>
-  <input type="file" id="imageUpload" accept="image/*">
-  <br><br>
-  <button onclick="generateQRCode()">Gerar QR Code</button>
-
-  <div id="qrcode">
-    <canvas id="qrCanvas" width="300" height="300"></canvas>
-  </div>
-
-  <script src="qrcode.min.js"></script> <!-- Biblioteca de geração de QR Code -->
-  <script>
-    function generateQRCode() {
-      var url = document.getElementById('urlInput').value;
-      var canvas = document.getElementById('qrCanvas');
-      var ctx = canvas.getContext('2d');
-      var size = 300;
-
-      // Limpa o canvas antes de gerar o QR Code
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (url) {
-        // Gera o QR Code no canvas
-        var qrCode = new QRCode(document.createElement('div'), {
-          text: url,
-          width: size,
-          height: size,
-          correctLevel: QRCode.CorrectLevel.H
-        });
-
-        // Converte o QR Code gerado para uma imagem e desenha no canvas
-        qrCode._oDrawing._elCanvas.toDataURL();
-        var qrCodeImage = new Image();
-        qrCodeImage.src = qrCode._oDrawing._elCanvas.toDataURL();
-
-        qrCodeImage.onload = function () {
-          // Desenha o QR Code no canvas
-          ctx.drawImage(qrCodeImage, 0, 0, size, size);
-
-          // Logo Upload e sobreposição
-          var imageInput = document.getElementById('imageUpload');
-          if (imageInput.files.length > 0) {
-            var reader = new FileReader();
-            reader.onload = function (event) {
-              var logo = new Image();
-              logo.src = event.target.result;
-
-              logo.onload = function () {
-                var imgSize = size * 0.2; // Define o tamanho da logo (20% do QR code)
-                ctx.drawImage(logo, (size - imgSize) / 2, (size - imgSize) / 2, imgSize, imgSize);
-              };
-            };
-            reader.readAsDataURL(imageInput.files[0]); // Carrega e processa a imagem
-          }
-        };
-      } else {
-        alert("Por favor, insira um URL válido.");
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>QR Code with Logo</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://unpkg.com/view-design/dist/styles/iview.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/view-design/dist/iview.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"
+    ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
       }
-    }
-  </script>
-</body>
-</html>
+      canvas {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h2>QR Code with Logo</h2>
+      <div>
+        <span>
+          Dots Options Type:
+          <i-select
+            v-model="dotType"
+            style="width: 200px; text-align: left"
+            placeholder="choose"
+            @on-change="createQrcode"
+          >
+            <i-option v-for="item in dotTypes" :value="item" :key="item">
+              {{ item }}
+            </i-option>
+          </i-select>
+        </span>
+        <span>
+          Corners Options Type:
+          <i-select
+            v-model="cornerType"
+            style="width: 200px; text-align: left"
+            placeholder="choose"
+            @on-change="createQrcode"
+          >
+            <i-option v-for="item in cornerTypes" :value="item" :key="item">
+              {{ item }}
+            </i-option>
+          </i-select>
+        </span>
+      </div>
+
+      <div>
+        <span>
+          Dots Color:
+          <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
+        </span>
+        <span>
+          Corners Color:
+          <color-picker
+            v-model="cornerColor"
+            @on-change="createQrcode"
+          ></color-picker>
+        </span>
+      </div>
+
+      <canvas id="canvas"></canvas>
+
