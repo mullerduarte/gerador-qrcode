@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionamento</title>
+    <script>
+        function redirectBasedOnOS() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Detecta iOS
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = "https://link-para-ios.com"; // Substitua com o link para iOS
+            }
+            // Detecta Android
+            else if (/android/i.test(userAgent)) {
+                window.location.href = "https://link-para-android.com"; // Substitua com o link para Android
+            }
+            // Qualquer outro sistema (opcional)
+            else {
+                window.location.href = "https://link-alternativo.com"; // Substitua com um link alternativo (opcional)
+            }
+        }
+    </script>
+</head>
+<body onload="redirectBasedOnOS()">
+    <h1>Redirecionando...</h1>
+</body>
+</html>
