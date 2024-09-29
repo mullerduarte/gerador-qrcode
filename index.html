@@ -1,83 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>QR Code with Logo</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://unpkg.com/view-design/dist/styles/iview.css"
-    />
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/view-design/dist/iview.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"
-    ></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
-      }
-      canvas {
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <h2>QR Code with Logo</h2>
-      <div>
-        <span>
-          Dots Options Type:
-          <i-select
-            v-model="dotType"
-            style="width: 200px; text-align: left"
-            placeholder="choose"
-            @on-change="createQrcode"
-          >
-            <i-option v-for="item in dotTypes" :value="item" :key="item">
-              {{ item }}
-            </i-option>
-          </i-select>
-        </span>
-        <span>
-          Corners Options Type:
-          <i-select
-            v-model="cornerType"
-            style="width: 200px; text-align: left"
-            placeholder="choose"
-            @on-change="createQrcode"
-          >
-            <i-option v-for="item in cornerTypes" :value="item" :key="item">
-              {{ item }}
-            </i-option>
-          </i-select>
-        </span>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>QR Code with Logo</title>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/view-design/dist/styles/iview.css" />
+  <script type="text/javascript" src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/view-design/dist/iview.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    canvas {
+      margin-top: 20px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>QR Code with Logo</h2>
+    <div>
+      <span>
+        Dots Options Type:
+        <i-select
+          v-model="dotType"
+          style="width: 200px; text-align: left"
+          placeholder="choose"
+          @on-change="createQrcode"
+        >
+          <i-option v-for="item in dotTypes" :value="item" :key="item">{{ item }}</i-option>
+        </i-select>
+      </span>
+      <span>
+        Corners Options Type:
+        <i-select
+          v-model="cornerType"
+          style="width: 200px; text-align: left"
+          placeholder="choose"
+          @on-change="createQrcode"
+        >
+          <i-option v-for="item in cornerTypes" :value="item" :key="item">{{ item }}</i-option>
+        </i-select>
+      </span>
+    </div>
 
-      <div>
-        <span>
-          Dots Color:
-          <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
-        </span>
-        <span>
-          Corners Color:
-          <color-picker
-            v-model="cornerColor"
-            @on-change="createQrcode"
-          ></color-picker>
-        </span>
-      </div>
+    <div>
+      <span>
+        Dots Color:
+        <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
+      </span>
+      <span>
+        Corners Color:
+        <color-picker v-model="cornerColor" @on-change="createQrcode"></color-picker>
+      </span>
+    </div>
 
-      <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="300" height="300"></canvas>
 
+    <button @click="downloadQrCode">Download QR Code</button>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        dotType: 'square',
+        dotColor: '#000000',
+        dotTypes: ['square', 'dot', 'diamond', 'star'],
+        cornerType: 'square',
+        cornerColor: '#000000',
+        cornerTypes: ['square', 'rounded', 'circle'],
+      },
+      mounted() {
+        this.createQrcode();
+      },
+      methods: {
+        createQrcode() {
+          new QrCodeWithLogo({
+            canvas: document.getElementById('canvas'),
+            content: 'https://github.com/zxpsuper/qrcode-with-logos',
+            width: 300,
+            logo: {
+              src: 'https://avatars.githubusercontent.com/u/28730619?v=4',
+              borderRadius: 8,
+            },
+            dotsOptions: {
+              color: this.dotColor,
+              type: this.dotType,
+            },
+            cornersOptions: {
+              color: this.cornerColor,
+              type: this.cornerType,
+            },
+          });
+        },
+        downloadQrCode() {
+          const canvas = document.getElementById('canvas');
+          const link = document.createElement('a');
+          link.download = 'qrcode.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        },
+      },
+    });
+  </script>
+</body>
+</html>
