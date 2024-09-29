@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,20 +11,14 @@
       type="text/css"
       href="https://unpkg.com/view-design/dist/styles/iview.css"
     />
-    <link rel="stylesheet" href="src/index.css" />
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/view-design/dist/iview.min.js"
-    ></script>
+    <link rel="stylesheet" href="./index.css" />
+    <script type="text/javascript" src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/view-design/dist/iview.min.js"></script>
   </head>
   <body>
     <a
       class="github-fork-ribbon right-top"
-      href="https://github.com/seuusuario/qrcode-with-logo"
+      href="https://github.com/zxpsuper/qrcode-with-logos"
       title="Fork me on GitHub"
       >Fork me on GitHub</a
     >
@@ -31,19 +26,16 @@
       <h2>qrcode-with-logos</h2>
       <p>
         You can input
-        <span class="code">qrcode.downloadImage('qrcode')</span> to download
-        image on console.
+        <span class="code">qrcode.downloadImage('qrcode')</span> to download image on console.
         <button onclick="qrcode.downloadImage('qrcode')">download!</button>
       </p>
       <p>
         You can input
-        <span class="code">qrcode.getCanvas().then(canvas => {})</span> to deal
-        with the canvas.
+        <span class="code">qrcode.getCanvas().then(canvas => {})</span> to deal with the canvas.
       </p>
       <p>
         You can input
-        <span class="code">qrcode.getImage().then(image => {})</span> to deal
-        with the image.
+        <span class="code">qrcode.getImage().then(image => {})</span> to deal with the image.
       </p>
       <div style="margin-top: 16px">
         <canvas id="canvas" title="canvas"></canvas>
@@ -61,12 +53,7 @@
               placeholder="choose"
               @on-change="createQrcode"
             >
-              <i-option
-                v-for="item in dotTypes"
-                :value="item"
-                :key="item"
-                >{{ item }}</i-option
-              >
+              <i-option v-for="item in dotTypes" :value="item" :key="item">{{ item }}</i-option>
             </i-select>
           </span>
         </i-col>
@@ -79,12 +66,7 @@
               placeholder="choose"
               @on-change="createQrcode"
             >
-              <i-option
-                v-for="item in cornerTypes"
-                :value="item"
-                :key="item"
-                >{{ item }}</i-option
-              >
+              <i-option v-for="item in cornerTypes" :value="item" :key="item">{{ item }}</i-option>
             </i-select>
           </span>
         </i-col>
@@ -92,17 +74,22 @@
 
       <row>
         <i-col span="12">
-          dotsOptions.color
-          <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
+          dotsOptions.color<color-picker
+            v-model="dotColor"
+            @on-change="createQrcode"
+          ></color-picker>
         </i-col>
-        <i-col span="12">
-          cornersOptions.color
-          <color-picker v-model="cornerColor" @on-change="createQrcode"></color-picker>
-        </i-col>
+        <i-col span="12"
+          >cornersOptions.color<color-picker
+            v-model="cornerColor"
+            @on-change="createQrcode"
+          ></color-picker
+        ></i-col>
       </row>
+      <div></div>
     </div>
-
-    <script src="src/server.ts"></script>
+    <!-- <img src="" alt="" id="image" /> -->
+    <script src="./src/server.ts"></script>
     <script>
       new Vue({
         el: '#app',
@@ -121,7 +108,7 @@
             'fluid-line',
             'stripe',
             'stripe-row',
-            'stripe-column',
+            'stripe-column'
           ],
           cornerType: 'square',
           cornerColor: '#000',
@@ -132,59 +119,60 @@
             'rounded-circle',
             'circle-rounded',
             'circle-diamond',
-            'circle-star',
-          ],
+            'circle-star'
+          ]
         },
         mounted() {
-          this.createQrcode();
+          this.createQrcode()
         },
         methods: {
           createQrcode() {
             window.qrcode = new QrCodeWithLogo({
               canvas: document.getElementById('canvas'),
-              content: 'https://github.com/seuusuario/qrcode-with-logo',
+              content: 'https://github.com/zxpsuper/qrcode-with-logos',
               width: 1024,
               download: false,
               image: document.getElementById('image'),
               logo: {
                 src: 'https://avatars.githubusercontent.com/u/28730619?v=4',
+                // borderWidth: 60,
                 bgColor: '#eee',
                 borderRadius: 60,
-                logoRadius: 20,
+                logoRadius: 20
               },
               dotsOptions: {
                 color: this.dotColor,
-                type: this.dotType,
+                type: this.dotType
               },
               cornersOptions: {
                 color: this.cornerColor,
                 type: this.cornerType,
                 radius: {
                   inner: 1,
-                  outer: 320,
-                },
+                  outer: 320
+                }
               },
               nodeQrCodeOptions: {
                 margin: 10,
                 color: {
                   dark: '#f00',
-                  light: '#eee',
-                },
+                  light: '#eee'
+                }
               },
               onError(error) {
-                console.log(error, 100);
-              },
-            });
+                console.log(error, 100)
+              }
+            })
 
             window.qrcode.getImage().catch((err) => {
-              console.log(err, 111);
-            });
+              console.log(err, 111)
+            })
             window.qrcode.getCanvas().catch((err) => {
-              console.log(err, 222);
-            });
-          },
-        },
-      });
+              console.log(err, 222)
+            })
+          }
+        }
+      })
     </script>
   </body>
 </html>
