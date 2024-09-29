@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator with Logo Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #qrcode {
+      margin-top: 20px;
+      position: relative;
+    }
+    #qrCanvas {
+      display: inline-block;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #logoCanvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Code Generator with Logo Upload</h1>
+  <p>Insira o URL da página de redirecionamento para Android/iOS:</p>
+  <input type="text" id="urlInput" value="https://seuusuario.github.io/qr-code-generator/redirect.html">
+  <br><br>
+  <input type="file" id="imageUpload" accept="image/*">
+  <br><br>
+  <button onclick="generateQRCode()">Gerar QR Code</button>
+
+  <div id="qrcode">
+    <canvas id="qrCanvas"></canvas>
+  </div>
+
+  <script src="qrcode.min.js"></script> <!-- Biblioteca de geração de QR Code -->
+  <script>
+    function generateQRCode() {
+      var url = document.getElementById('urlInput').value;
+      var canvas = document.getElementById('qrCanvas');
+      var size = 300;
+
+      if (url) {
+        // Gera o QR Code
+        var qrCode = new QRCode(canvas, {
+          text: url,
+          width: size,
+          height: size,
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Espera a imagem ser carregada para desenhar no centro
+        var imageInput = document.getElementById('imageUpload');
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+          var img = new Image();
+          img.src = event.target.result;
+          img.onload = function() {
+            // Desenha a logo no centro do QR Code
+            var ctx = canvas.getContext('2d');
+            var imgSize = size * 0.2; // Define o tamanho da logo (20% do QR code)
+            ctx.drawImage(img, (size - imgSize) / 2, (size - imgSize) / 2, imgSize, imgSize);
+          }
+        };
+
+        if (imageInput.files.length > 0) {
+          reader.readAsDataURL(imageInput.files[0]); // Carrega e processa a imagem
+        }
+      } else {
+        alert("Por favor, insira um URL válido.");
+      }
+    }
+  </script>
+</body>
+</html>
