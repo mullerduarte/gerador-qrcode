@@ -1,96 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Gerador de QR Code com Logomarca</title>
-  <link rel="stylesheet" href="https://unpkg.com/view-design/dist/styles/iview.css" />
-  <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-  <script src="https://unpkg.com/view-design/dist/iview.min.js"></script>
-  <script src="https://unpkg.com/qrcode-with-logos@1.0.6/dist/qrcode-with-logos.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    canvas {
-      margin-top: 20px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-    input {
-      padding: 10px;
-      width: 300px;
-      margin: 10px 0;
-    }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <h2>Gerador de QR Code com Logomarca</h2>
-    
-    <input type="text" v-model="appTitle" placeholder="Título do App" />
-    
-    <input type="text" v-model="androidLink" placeholder="Link do Android (Play Store)" />
-    <input type="text" v-model="iosLink" placeholder="Link do iOS (App Store)" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>QRcode-with-logo</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://unpkg.com/view-design/dist/styles/iview.css"
+    />
+    <link rel="stylesheet" href="src/index.css" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/view-design/dist/iview.min.js"
+    ></script>
+  </head>
+  <body>
+    <a
+      class="github-fork-ribbon right-top"
+      href="https://github.com/seuusuario/qrcode-with-logo"
+      title="Fork me on GitHub"
+      >Fork me on GitHub</a
+    >
+    <div class="info">
+      <h2>qrcode-with-logos</h2>
+      <p>
+        You can input
+        <span class="code">qrcode.downloadImage('qrcode')</span> to download
+        image on console.
+        <button onclick="qrcode.downloadImage('qrcode')">download!</button>
+      </p>
+      <p>
+        You can input
+        <span class="code">qrcode.getCanvas().then(canvas => {})</span> to deal
+        with the canvas.
+      </p>
+      <p>
+        You can input
+        <span class="code">qrcode.getImage().then(image => {})</span> to deal
+        with the image.
+      </p>
+      <div style="margin-top: 16px">
+        <canvas id="canvas" title="canvas"></canvas>
+        <img src="" alt="" id="image" title="image" />
+      </div>
+    </div>
+    <div id="app">
+      <row>
+        <i-col span="12">
+          <span>
+            dotsOptions.type
+            <i-select
+              v-model="dotType"
+              style="width: 200px; text-align: left"
+              placeholder="choose"
+              @on-change="createQrcode"
+            >
+              <i-option
+                v-for="item in dotTypes"
+                :value="item"
+                :key="item"
+                >{{ item }}</i-option
+              >
+            </i-select>
+          </span>
+        </i-col>
+        <i-col span="12">
+          <span>
+            cornersOptions.type
+            <i-select
+              v-model="cornerType"
+              style="width: 200px; text-align: left"
+              placeholder="choose"
+              @on-change="createQrcode"
+            >
+              <i-option
+                v-for="item in cornerTypes"
+                :value="item"
+                :key="item"
+                >{{ item }}</i-option
+              >
+            </i-select>
+          </span>
+        </i-col>
+      </row>
 
-    <div>
-      Dots Color:
-      <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
+      <row>
+        <i-col span="12">
+          dotsOptions.color
+          <color-picker v-model="dotColor" @on-change="createQrcode"></color-picker>
+        </i-col>
+        <i-col span="12">
+          cornersOptions.color
+          <color-picker v-model="cornerColor" @on-change="createQrcode"></color-picker>
+        </i-col>
+      </row>
     </div>
 
-    <canvas id="canvas" width="300" height="300"></canvas>
-    
-    <button @click="createQrcode">Gerar QR Code</button>
-    <button @click="downloadQrCode">Baixar QR Code</button>
-  </div>
-
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        appTitle: 'Meu App',
-        androidLink: 'https://play.google.com/store/apps/details?id=com.example', // Exemplo de link
-        iosLink: 'https://apps.apple.com/app/id1234567890', // Exemplo de link
-        dotColor: '#000000',
-      },
-      methods: {
-        createQrcode() {
-          const userAgent = navigator.userAgent.toLowerCase();
-          const redirectUrl = userAgent.includes('android') ? this.androidLink : this.iosLink;
-
-          new QrCodeWithLogo({
-            canvas: document.getElementById('canvas'),
-            content: redirectUrl,
-            width: 300,
-            logo: {
-              src: 'https://example.com/logo.png', // Coloque o URL da sua logomarca
-              borderRadius: 8,
-            },
-            dotsOptions: {
-              color: this.dotColor,
-              type: 'square',
-            },
-            cornersOptions: {
-              color: '#000000',
-              type: 'square',
-            },
-          });
+    <script src="src/server.ts"></script>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          dotType: 'stripe',
+          dotColor: '#000',
+          dotTypes: [
+            'square',
+            'dot',
+            'dot-small',
+            'tile',
+            'rounded',
+            'diamond',
+            'star',
+            'fluid',
+            'fluid-line',
+            'stripe',
+            'stripe-row',
+            'stripe-column',
+          ],
+          cornerType: 'square',
+          cornerColor: '#000',
+          cornerTypes: [
+            'square',
+            'rounded',
+            'circle',
+            'rounded-circle',
+            'circle-rounded',
+            'circle-diamond',
+            'circle-star',
+          ],
         },
-        downloadQrCode() {
-          const canvas = document.getElementById('canvas');
-          const link = document.createElement('a');
-          link.download = 'qrcode.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
+        mounted() {
+          this.createQrcode();
         },
-      },
-    });
-  </script>
-</body>
+        methods: {
+          createQrcode() {
+            window.qrcode = new QrCodeWithLogo({
+              canvas: document.getElementById('canvas'),
+              content: 'https://github.com/seuusuario/qrcode-with-logo',
+              width: 1024,
+              download: false,
+              image: document.getElementById('image'),
+              logo: {
+                src: 'https://avatars.githubusercontent.com/u/28730619?v=4',
+                bgColor: '#eee',
+                borderRadius: 60,
+                logoRadius: 20,
+              },
+              dotsOptions: {
+                color: this.dotColor,
+                type: this.dotType,
+              },
+              cornersOptions: {
+                color: this.cornerColor,
+                type: this.cornerType,
+                radius: {
+                  inner: 1,
+                  outer: 320,
+                },
+              },
+              nodeQrCodeOptions: {
+                margin: 10,
+                color: {
+                  dark: '#f00',
+                  light: '#eee',
+                },
+              },
+              onError(error) {
+                console.log(error, 100);
+              },
+            });
+
+            window.qrcode.getImage().catch((err) => {
+              console.log(err, 111);
+            });
+            window.qrcode.getCanvas().catch((err) => {
+              console.log(err, 222);
+            });
+          },
+        },
+      });
+    </script>
+  </body>
 </html>
